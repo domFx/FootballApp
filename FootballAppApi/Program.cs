@@ -1,4 +1,6 @@
 using FootballApp.Core;
+using FootballApp.Core.Data;
+using FootballAppApi.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +23,11 @@ namespace FootballAppApi {
 
 			try {
 				FootballContext context = services.GetRequiredService<FootballContext>();
-				context.Database.EnsureCreated();
+
+				DbInitializer.Initialize(context);
+
+				//AdminService adminService = services.GetRequiredService<AdminService>();
+				//adminService.UpdateAllLeagueDataAsync().GetAwaiter().GetResult();
 			} catch (Exception ex) {
 				ILogger logger = services.GetRequiredService<ILogger<Program>>();
 				logger.LogError(ex, $"An error occurect creating the DB - {ex.Message}");

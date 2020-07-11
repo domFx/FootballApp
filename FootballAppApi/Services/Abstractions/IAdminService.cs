@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using FootballApp.Core.Models;
+using System.Threading.Tasks;
 
 namespace FootballAppApi.Services {
 	public interface IAdminService {
-		Task UpdateAllLeagueDataAsync();
-		Task UpdateLeagueDataAsync(string league);
+		Task UpdateAllCompetitionDataAsync();
+		Task UpdateCompetitionDataAsync(string competitionCode, Competition competition = null);
 	}
 }

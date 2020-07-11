@@ -6,7 +6,9 @@ namespace FootballApp.Core {
 	public class FootballContext : DbContext {
 		public DbSet<Team> Teams { get; set; }
 		public DbSet<Fixture> Fixtures { get; set; }
-		public DbSet<Division> Divisions { get; set; }
+		public DbSet<Competition> Competitions { get; set; }
+		public DbSet<Country> Countries { get; set; }
+		public DbSet<Lookup> Lookups { get; set; }
 
 		public FootballContext(
 			DbContextOptions<FootballContext> options
@@ -15,7 +17,9 @@ namespace FootballApp.Core {
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Entity<Team>().ToTable("Team");
 			modelBuilder.Entity<Fixture>().ToTable("Fixture");
-			modelBuilder.Entity<Division>().ToTable("Division");
+			modelBuilder.Entity<Competition>().ToTable("Competition");
+			modelBuilder.Entity<Country>().ToTable("Country");
+			modelBuilder.Entity<Lookup>().ToTable("Lookup");
 		}
 	}
 }

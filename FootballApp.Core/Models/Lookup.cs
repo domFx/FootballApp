@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace FootballApp.Core.Models {
-	public class Team {
+	public class Lookup {
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int TeamId { get; set; }
-		public string Name { get; set; }
-		public string AltName { get; set; }
-		public List<Competition> Competitions{ get; set; }
+		public int LookupId { get; set; }
+		public string SetName { get; set; }
+		public string Code { get; set; }
+		public string Value { get; set; }
 	}
 }

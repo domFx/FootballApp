@@ -23,6 +23,8 @@ namespace FootballAppApi {
 		public IConfiguration Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services) {
+			services.AddSwaggerGen();
+
 			services.AddDbContext<FootballContext>(options =>
 				options.UseSqlServer(Configuration.GetConnectionString("FootballContext")));
 
@@ -32,6 +34,14 @@ namespace FootballAppApi {
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+			app.UseSwagger();
+
+			app.UseSwaggerUI(c => {
+				c.SwaggerEndpoint("/swagger/v1/swagger.json", "FootballApp Api");
+				c.DocumentTitle = "Football App Api";
+				c.RoutePrefix = string.Empty;
+			});
+		
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 			}

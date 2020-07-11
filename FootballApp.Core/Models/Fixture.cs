@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace FootballApp.Core.Models {
 	public class Fixture {
-		[DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int FixtureId { get; set; }
+		[ForeignKey("HomeTeamId")]
 		public Team HomeTeam { get; set; }
+		[ForeignKey("AwayTeamId")]
 		public Team AwayTeam { get; set; }
 		public DateTime Date { get; set; }
-		public Division Division { get; set; }
+		public TimeSpan Time { get; set; }
+		public Competition Competition { get; set; }
 	}
 }
