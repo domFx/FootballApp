@@ -12,5 +12,7 @@ namespace FootballApp.Core.Models {
 		public DateTime Date { get; set; }
 		public TimeSpan Time { get; set; }
 		public Competition Competition { get; set; }
+
+		public Fixture() { }
 	}
 }

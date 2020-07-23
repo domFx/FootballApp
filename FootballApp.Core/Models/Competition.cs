@@ -8,6 +8,6 @@ namespace FootballApp.Core.Models {
 		public string Code { get; set; }
 		public string Name { get; set; }
 		public Country Country { get; set; }
-		public List<Team> Teams { get; set; }
+		public IList<CompetitionTeam> Teams { get; set; }
 	}
 }

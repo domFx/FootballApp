@@ -9,7 +9,8 @@ namespace FootballApp.Core {
 		public DbSet<Competition> Competitions { get; set; }
 		public DbSet<Country> Countries { get; set; }
 		public DbSet<Lookup> Lookups { get; set; }
-
+		public DbSet<CompetitionTeam> CompetitionTeams { get; set; } 
+		
 		public FootballContext(
 			DbContextOptions<FootballContext> options
 		) : base(options) { }
@@ -20,6 +21,8 @@ namespace FootballApp.Core {
 			modelBuilder.Entity<Competition>().ToTable("Competition");
 			modelBuilder.Entity<Country>().ToTable("Country");
 			modelBuilder.Entity<Lookup>().ToTable("Lookup");
+			modelBuilder.Entity<CompetitionTeam>().ToTable("CompetitionTeam")
+						.HasKey(ct => new { ct.CompetitionId, ct.TeamId });
 		}
 	}
 }

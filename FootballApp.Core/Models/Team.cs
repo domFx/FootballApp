@@ -1,7 +1,6 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace FootballApp.Core.Models {
 	public class Team {
@@ -9,6 +8,12 @@ namespace FootballApp.Core.Models {
 		public int TeamId { get; set; }
 		public string Name { get; set; }
 		public string AltName { get; set; }
-		public List<Competition> Competitions{ get; set; }
+		[ForeignKey("CountryId")]
+		public Country Country { get; set; }
+		public IList<CompetitionTeam> Competitions { get; set; }
+
+		public Team() {
+			Competitions = new List<CompetitionTeam>();
+		}
 	}
 }

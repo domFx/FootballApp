@@ -3,11 +3,15 @@ using FootballApp.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace FootballAppApi.Services {
 	public class AdminService : IAdminService {
@@ -65,13 +69,11 @@ namespace FootballAppApi.Services {
 
 			// Check if we have more than one entry (excluding the csv header)
 			if(data.Length > 1) {
+				fixtures = new List<Fixture>();
 				List<Lookup> teamFieldsMap = await _context.Lookups.Where(l => l.SetName.Equals("CSVHeader")).ToListAsync();
 
 				Dictionary<string, Team> teams = 
-					await _context.Teams.Include(i => i.Competitions)
-										.Where(c => c.Competitions.Select(c => c.CompetitionId)
-																  .Contains(competition.CompetitionId))
-										.ToDictionaryAsync(t => t.AltName, t => t);
+					await _context.Teams.ToDictionaryAsync(t => t.AltName, t => t);
 
 				Dictionary<string, int> headerCodes = data[0].Split(',')
 															 .Select((val, idx) => new { val, idx })
@@ -79,48 +81,58 @@ namespace FootballAppApi.Services {
 				
 				for(int i = 1; i < data.Length; i++) {
 					string[] fixtureData = data[i].Split(',');
-					dynamic fixture = new ExpandoObject();
+					Fixture fixture = new Fixture();
+					Type type = fixture.GetType();
 
-					for(int j = 0; j < fixtureData.Length; j++) {
+					foreach(Lookup l in teamFieldsMap) {
+						PropertyInfo prop = type.GetProperty(l.Value);
 
-						foreach(Lookup l in teamFieldsMap) {
-							int idx = -1;
-							if(headerCodes.ContainsKey(l.Code))
-								idx = headerCodes[l.Code];
+						int idx = -1;
+						if(headerCodes.ContainsKey(l.Code))
+							idx = headerCodes[l.Code];
 							
-							if (idx >= 0) {
-								switch(l.Value) {
-									case "Competition":
-										fixture.Competition = competition;
-										break;
-									case "HomeTeam":
-									case "AwayTeam":
-										if(teams.ContainsKey(fixtureData[j])) {
-											((IDictionary<string, object>)fixture).Add(l.Value, teams[fixtureData[j]]);
-										} else {
-											// Team doesn't exist in Db, create a new one
-											Team t = new Team() {
-												Name = fixtureData[j],
-												AltName = fixtureData[j]
-											};
+						if (idx >= 0 && !(prop is null)) {
+							switch(l.Value) {
+								case "Competition":
+									prop.SetValue(fixture, competition);
+									break;
+								case "HomeTeam":
+								case "AwayTeam":
+									if(teams.ContainsKey(fixtureData[idx])) {
+										prop.SetValue(fixture, teams[fixtureData[idx]]);
+									} else {
+										// Team doesn't exist in Db, create a new one
+										Team t = new Team() {
+											Name = fixtureData[idx],
+											AltName = fixtureData[idx],
+											Country = competition.Country
+										};
 
-											_context.Teams.Add(t);
-											await _context.SaveChangesAsync();
-											t = await _context.Teams.Where(t => t.AltName.Equals(fixtureData[j])).FirstOrDefaultAsync();
-											teams.Add(t.AltName, t);
+										t.Competitions.Add(new CompetitionTeam() { Competition = competition, Team = t });
 
-											((IDictionary<string, object>)fixture).Add(l.Value, teams[fixtureData[j]]);
-										}
-										break;
-									default:
-										((IDictionary<string, object>)fixture).Add(l.Value, fixtureData[j]);
-										break;
-								}
+										_context.Teams.Add(t);
+										await _context.SaveChangesAsync();
+										t = await _context.Teams.Where(t => t.AltName.Equals(fixtureData[idx])).FirstOrDefaultAsync();
+										teams.Add(t.AltName, t);
+
+
+										prop.SetValue(fixture, teams[fixtureData[idx]]);
+									}
+									break;
+								case "Date":
+									prop.SetValue(fixture, DateTime.ParseExact(fixtureData[idx], "dd/MM/yyyy", CultureInfo.InvariantCulture));
+									break;
+								case "Time":
+									prop.SetValue(fixture, Convert.ToDateTime(fixtureData[idx]).TimeOfDay);
+									break;
+								default:
+									prop.SetValue(fixture, fixtureData[idx]);
+									break;
 							}
 						}
 					}
 
-					fixtures.Add((Fixture)fixture);
+					fixtures.Add(fixture);
 				}
 			}
 

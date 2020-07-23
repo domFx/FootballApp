@@ -12,7 +12,9 @@ namespace FootballAppApi {
 		public static void Main(string[] args) {
 			IHost host = CreateHostBuilder(args).Build();
 
+#if DEBUG
 			CreateDbIfNotExists(host);
+#endif
 
 			host.Run();
 		}
@@ -26,11 +28,11 @@ namespace FootballAppApi {
 
 				DbInitializer.Initialize(context);
 
-				//AdminService adminService = services.GetRequiredService<AdminService>();
-				//adminService.UpdateAllLeagueDataAsync().GetAwaiter().GetResult();
+				IAdminService adminService = services.GetRequiredService<IAdminService>();
+				adminService.UpdateAllCompetitionDataAsync().GetAwaiter().GetResult();
 			} catch (Exception ex) {
 				ILogger logger = services.GetRequiredService<ILogger<Program>>();
-				logger.LogError(ex, $"An error occurect creating the DB - {ex.Message}");
+				logger.LogError(ex, $"An error occurect => {ex.Message}");
 			}
 		}
 
