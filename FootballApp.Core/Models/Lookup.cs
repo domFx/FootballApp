@@ -10,5 +10,6 @@ namespace FootballApp.Core.Models {
 		public string SetName { get; set; }
 		public string Code { get; set; }
 		public string Value { get; set; }
+		public string ShortValue { get; set; }
 	}
 }

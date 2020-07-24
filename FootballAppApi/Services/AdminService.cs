@@ -92,12 +92,11 @@ namespace FootballAppApi.Services {
 							idx = headerCodes[l.Code];
 							
 						if (idx >= 0 && !(prop is null)) {
-							switch(l.Value) {
+							switch(l.ShortValue) {
 								case "Competition":
 									prop.SetValue(fixture, competition);
 									break;
-								case "HomeTeam":
-								case "AwayTeam":
+								case "Team":
 									if(teams.ContainsKey(fixtureData[idx])) {
 										prop.SetValue(fixture, teams[fixtureData[idx]]);
 									} else {
@@ -108,7 +107,7 @@ namespace FootballAppApi.Services {
 											Country = competition.Country
 										};
 
-										t.Competitions.Add(new CompetitionTeam() { Competition = competition, Team = t });
+										t.CompetitionTeams.Add(new CompetitionTeam() { Competition = competition, Team = t });
 
 										_context.Teams.Add(t);
 										await _context.SaveChangesAsync();
@@ -119,11 +118,14 @@ namespace FootballAppApi.Services {
 										prop.SetValue(fixture, teams[fixtureData[idx]]);
 									}
 									break;
-								case "Date":
+								case "DateTime":
 									prop.SetValue(fixture, DateTime.ParseExact(fixtureData[idx], "dd/MM/yyyy", CultureInfo.InvariantCulture));
 									break;
-								case "Time":
+								case "TimeSpan":
 									prop.SetValue(fixture, Convert.ToDateTime(fixtureData[idx]).TimeOfDay);
+									break;
+								case "int":
+									prop.SetValue(fixture, Convert.ToInt32(fixtureData[idx]));
 									break;
 								default:
 									prop.SetValue(fixture, fixtureData[idx]);

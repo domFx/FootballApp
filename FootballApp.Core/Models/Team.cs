@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace FootballApp.Core.Models {
 	public class Team {
@@ -10,10 +10,7 @@ namespace FootballApp.Core.Models {
 		public string AltName { get; set; }
 		[ForeignKey("CountryId")]
 		public Country Country { get; set; }
-		public IList<CompetitionTeam> Competitions { get; set; }
-
-		public Team() {
-			Competitions = new List<CompetitionTeam>();
-		}
+		[JsonIgnore]
+		public IList<CompetitionTeam> CompetitionTeams { get; set; } = new List<CompetitionTeam>();
 	}
 }

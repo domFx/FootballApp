@@ -8,14 +8,32 @@ namespace FootballApp.Core.Data {
 
 			context.Database.EnsureDeleted();
 			context.Database.EnsureCreated();
-
+			
 			if (!context.Lookups.Any()) {
 				Lookup[] lookups = new Lookup[] {
-					new Lookup { SetName = "CSVHeader", Code = "Div", Value = "Competition" },
-					new Lookup { SetName = "CSVHeader", Code = "Date", Value = "Date" },
-					new Lookup { SetName = "CSVHeader", Code = "Time", Value = "Time" },
-					new Lookup { SetName = "CSVHeader", Code = "HomeTeam", Value = "HomeTeam" },
-					new Lookup { SetName = "CSVHeader", Code = "AwayTeam", Value = "AwayTeam" }
+					new Lookup { SetName = "CSVHeader", Code = "Div", Value = "Competition", ShortValue = "Competition" },
+					new Lookup { SetName = "CSVHeader", Code = "Date", Value = "Date", ShortValue = "DateTime" },
+					new Lookup { SetName = "CSVHeader", Code = "Time", Value = "Time", ShortValue = "TimeSpan" },
+					new Lookup { SetName = "CSVHeader", Code = "HomeTeam", Value = "HomeTeam", ShortValue = "Team" },
+					new Lookup { SetName = "CSVHeader", Code = "AwayTeam", Value = "AwayTeam", ShortValue = "Team" },
+					new Lookup { SetName = "CSVHeader", Code = "FTHG", Value = "FullTimeHomeGoals", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "FTAG", Value = "FullTimeAwayGoals", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "FTR", Value = "FullTimeResult", ShortValue = "string" },
+					new Lookup { SetName = "CSVHeader", Code = "HTHG", Value = "HalfTimeHomeGoals", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HTAG", Value = "HalfTimeAwayGoals", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "Referee", Value = "Referee", ShortValue = "string" },
+					new Lookup { SetName = "CSVHeader", Code = "HS", Value = "HomeTeamShots", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AS", Value = "AwayTeamShots", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HST", Value = "HomeTeamShotsOnTarget", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AST", Value = "AwayTeamShotsOnTarget", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HF", Value = "HomeTeamFouls", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AF", Value = "AwayTeamFouls", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HC", Value = "HomeTeamCorners", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AC", Value = "AwayTeamCorners", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HY", Value = "HomeTeamYellowCards", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AY", Value = "AwayTeamYellowCards", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "HR", Value = "HomeTeamRedCards", ShortValue = "int" },
+					new Lookup { SetName = "CSVHeader", Code = "AR", Value = "AwayTeamRedCards", ShortValue = "int" },
 				};
 
 				context.Lookups.AddRange(lookups);
