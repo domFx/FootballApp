@@ -32,13 +32,14 @@ namespace FootballAppApi.Services {
 			List<Competition> competitions = await _context.Competitions.ToListAsync();
 
 			if(!(competitions is null)) {
-				List<Task> competitionTasks = new List<Task>();
+				//List<Task> competitionTasks = new List<Task>();
 
 				foreach(Competition competition in competitions) {
-					competitionTasks.Add(UpdateCompetitionDataAsync(competition.Code, competition));
+					//competitionTasks.Add(UpdateCompetitionDataAsync(competition.Code, competition));
+					await UpdateCompetitionDataAsync(competition.Code, competition);
 				}
 
-				await Task.WhenAll(competitionTasks);
+				//await Task.WhenAll(competitionTasks);
 			}
 		}
 
@@ -60,7 +61,7 @@ namespace FootballAppApi.Services {
 
 		private async Task<string[]> GetCSVForCompetitionAsync(string csvCode) {
 #if DEBUG
-			return await File.ReadAllLinesAsync("TestData/E1.csv");
+			return await File.ReadAllLinesAsync($"TestData/{csvCode}.csv");
 #endif
 		}
 

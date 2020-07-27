@@ -27,13 +27,23 @@ namespace FootballApp.Api.Controllers {
 		[HttpGet]
 		[ProducesResponseType((int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
-		public async Task<ActionResult<CountryDto>> GetCountryAsync(
-			[FromQuery(Name="code")] string countryCode = "",
-			[FromQuery(Name="id")] int countryId = 0
-		) {
+		public async Task<ActionResult<List<CountryDto>>> GetAllCountriesAsync() {
+			List<CountryDto> countries = await _context.Countries
+								.Select(c => _mapper.Map<CountryDto>(c))
+								.ToListAsync();
+			
+			if (!(countries is null) && countries.Any())
+				return Ok(countries);
+			else
+				return NoContent();
+		}
+
+		[HttpGet("code/{countryCode}")]
+		[ProducesResponseType((int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NoContent)]
+		public async Task<ActionResult<CountryDto>> GetCountryByCodeAsync(string countryCode) {
 			CountryDto country = await _context.Countries
-											.Where(c => countryId == 0 || countryId == c.CountryId)
-											.Where(c => string.IsNullOrEmpty(countryCode) || countryCode.ToLower().Equals(c.Code.ToLower()))
+											.Where(c => countryCode.ToLower().Equals(c.Code.ToLower()))
 											.Select(c => _mapper.Map<CountryDto>(c))
 											.FirstOrDefaultAsync();
 
@@ -43,10 +53,25 @@ namespace FootballApp.Api.Controllers {
 				return NoContent();
 		}
 
-		[HttpGet("{countryCode}/teams")]
+		[HttpGet("id/{countryId:int}")]
 		[ProducesResponseType((int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
-		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsAsync(string countryCode) {
+		public async Task<ActionResult<CountryDto>> GetCountryByIdAsync(int countryId) {
+			CountryDto country = await _context.Countries
+											.Where(c => countryId == c.CountryId)
+											.Select(c => _mapper.Map<CountryDto>(c))
+											.FirstOrDefaultAsync();
+
+			if (!(country is null))
+				return Ok(country);
+			else
+				return NoContent();
+		}
+
+		[HttpGet("code/{countryCode}/teams")]
+		[ProducesResponseType((int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NoContent)]
+		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsByCodeAsync(string countryCode) {
 			List<TeamDto> teams = await _context.Teams
 										.Include(t => t.Country)
 										.Where(t => t.Country.Code.ToLower().Equals(countryCode.ToLower()))
@@ -59,13 +84,45 @@ namespace FootballApp.Api.Controllers {
 				return NoContent();
 		}
 
-		[HttpGet("{countryCode}/competitions")]
+		[HttpGet("id/{countryId:int}/teams")]
 		[ProducesResponseType((int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
-		public async Task<ActionResult<List<CompetitionDto>>> GetAllCompetitionsAsync(string countryCode) {
+		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsByIdAsync(int countryId) {
+			List<TeamDto> teams = await _context.Teams
+										.Include(t => t.Country)
+										.Where(t => t.Country.CountryId == countryId)
+										.Select(t => _mapper.Map<TeamDto>(t))
+										.ToListAsync();
+
+			if (!(teams is null) && teams.Any())
+				return Ok(teams);
+			else
+				return NoContent();
+		}
+
+		[HttpGet("code/{countryCode}/competitions")]
+		[ProducesResponseType((int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NoContent)]
+		public async Task<ActionResult<List<CompetitionDto>>> GetAllCompetitionsByCodeAsync(string countryCode) {
 			List<CompetitionDto> competitions = await _context.Competitions
 										.Include(t => t.Country)
 										.Where(t => t.Country.Code.ToLower().Equals(countryCode.ToLower()))
+										.Select(t => _mapper.Map<CompetitionDto>(t))
+										.ToListAsync();
+
+			if (!(competitions is null) && competitions.Any())
+				return Ok(competitions);
+			else
+				return NoContent();
+		}
+		
+		[HttpGet("id/{countryId:int}/competitions")]
+		[ProducesResponseType((int)HttpStatusCode.OK)]
+		[ProducesResponseType((int)HttpStatusCode.NoContent)]
+		public async Task<ActionResult<List<CompetitionDto>>> GetAllCompetitionsByIdAsync(int countryId) {
+			List<CompetitionDto> competitions = await _context.Competitions
+										.Include(t => t.Country)
+										.Where(t => t.Country.CountryId == countryId)
 										.Select(t => _mapper.Map<CompetitionDto>(t))
 										.ToListAsync();
 

@@ -1,6 +1,5 @@
 ﻿using FootballApp.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace FootballApp.Core {
 	public class FootballContext : DbContext {
@@ -18,8 +17,10 @@ namespace FootballApp.Core {
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Entity<Team>().ToTable("Team");
 			modelBuilder.Entity<Fixture>().ToTable("Fixture");
-			modelBuilder.Entity<Competition>().ToTable("Competition");
-			modelBuilder.Entity<Country>().ToTable("Country");
+			modelBuilder.Entity<Competition>().ToTable("Competition")
+						.HasIndex(c => c.Code).IsUnique();
+			modelBuilder.Entity<Country>().ToTable("Country")
+						.HasIndex(c => c.Code).IsUnique();
 			modelBuilder.Entity<Lookup>().ToTable("Lookup");
 			modelBuilder.Entity<CompetitionTeam>().ToTable("CompetitionTeam")
 						.HasKey(ct => new { ct.CompetitionId, ct.TeamId });

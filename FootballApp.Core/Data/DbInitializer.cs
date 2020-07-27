@@ -54,6 +54,7 @@ namespace FootballApp.Core.Data {
 				Country country = context.Countries.Where(c => c.Code == "ENG").FirstOrDefault();
 
 				Competition[] competitions = new Competition[] {
+					new Competition { Code = "E0", Name = "English Premier League", Country = country },
 					new Competition { Code = "E1", Name = "English Championship", Country = country }
 				};
 
