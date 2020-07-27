@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace FootballApp.Core.Models {
-	public class CompetitionDto : Competition {
-		public CompetitionDto(Competition c) {
-
-		}
-
-		public CompetitionDto() { }
+	public class CompetitionDto : CompetitionBase {
+		public CountryBase Country { get; set; }
+		public IList<CompetitionTeamBase> CompetitionTeams { get; set; }
 	}
 }

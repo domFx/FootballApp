@@ -1,4 +1,5 @@
-﻿using FootballApp.Core;
+﻿using AutoMapper;
+using FootballApp.Core;
 using FootballApp.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,25 @@ namespace FootballApp.Api.Controllers {
 	[ApiController]
 	public class FixturesController : ControllerBase {
 		readonly FootballContext _context;
+		readonly IMapper _mapper;
 
-		public FixturesController(FootballContext context) {
+		public FixturesController(
+			FootballContext context,
+			IMapper mapper
+		) {
 			_context = context;
+			_mapper = mapper;
 		}
 
 		[HttpGet("competition/{competitionCode}")]
 		[ProducesResponseType((int)HttpStatusCode.OK)]
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
-		public async Task<ActionResult<Fixture>> GetFixturesForCompetitionAsync(string competitionCode) {
-			List<Fixture> fixtures = await _context.Fixtures
+		public async Task<ActionResult<FixtureDto>> GetFixturesForCompetitionAsync(string competitionCode) {
+			List<FixtureDto> fixtures = await _context.Fixtures
 												.Include(f => f.HomeTeam)
 												.Include(f => f.AwayTeam)
+												.Include(f => f.Competition)
+												.Select(f => _mapper.Map<FixtureDto>(f))
 												.ToListAsync();
 
 			if (!(fixtures is null) && fixtures.Any())
@@ -31,6 +39,5 @@ namespace FootballApp.Api.Controllers {
 			else
 				return NoContent();
 		}
-
 	}
 }

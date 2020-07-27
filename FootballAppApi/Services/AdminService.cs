@@ -107,6 +107,9 @@ namespace FootballAppApi.Services {
 											Country = competition.Country
 										};
 
+										if (t.CompetitionTeams is null)
+											t.CompetitionTeams = new List<CompetitionTeam>();
+
 										t.CompetitionTeams.Add(new CompetitionTeam() { Competition = competition, Team = t });
 
 										_context.Teams.Add(t);

@@ -1,3 +1,5 @@
+using AutoMapper;
+using FootballApp.Api;
 using FootballApp.Core;
 using FootballAppApi.Services;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +18,12 @@ namespace FootballAppApi {
 		public IConfiguration Configuration { get; }
 
 		public void ConfigureServices(IServiceCollection services) {
+			MapperConfiguration mapperConfig = new MapperConfiguration(mc => {
+				mc.AddProfile(new AutoMapperProfile());
+			});
+
+			services.AddSingleton(mapperConfig.CreateMapper());
+
 			services.AddSwaggerGen();
 
 			services.AddDbContext<FootballContext>(options =>

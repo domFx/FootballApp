@@ -5,12 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 namespace FootballApp.Core.Models {
-	public class Country {
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int CountryId { get; set; }
-		public string Name { get; set; }
-		public string Code { get; set; }
-		[JsonIgnore]
-		public IList<Competition> CountryCompetitions { get; set; }
+	public class Country : CountryBase {
+		public IList<Competition> Competitions { get; set; }
 	}
 }

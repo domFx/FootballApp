@@ -1,4 +1,5 @@
-﻿using FootballApp.Core;
+﻿using AutoMapper;
+using FootballApp.Core;
 using FootballApp.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,14 @@ namespace FootballApp.Api.Controllers {
 	[ApiController]
 	public class TeamController : ControllerBase {
 		readonly FootballContext _context;
+		readonly IMapper _mapper;
 
-		public TeamController(FootballContext context) {
+		public TeamController(
+			FootballContext context,
+			IMapper mapper
+		) {
 			_context = context;
+			_mapper = mapper;
 		}
 
 		[HttpGet]
@@ -23,42 +29,7 @@ namespace FootballApp.Api.Controllers {
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
 		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsAsync() {
 			List<TeamDto> teams = await _context.Teams
-										.Select(t => new TeamDto() {
-											TeamId = t.TeamId,
-											Name = t.Name,
-											AltName = t.AltName,
-											Country = t.Country,
-											Competitions = t.CompetitionTeams.Select(ct => new TeamCompetitionDto() {
-												CompetitionId = ct.Competition.CompetitionId,
-												Code = ct.Competition.Code,
-												Name = ct.Competition.Name,
-											}).ToList()
-										})
-										.ToListAsync();
-
-			if (!(teams is null) && teams.Any())
-				return Ok(teams);
-			else
-				return NoContent();
-		}
-
-		[HttpGet("country/{countryCode}")]
-		[ProducesResponseType((int)HttpStatusCode.OK)]
-		[ProducesResponseType((int)HttpStatusCode.NoContent)]
-		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsInCountryAsync(string countryCode) {
-			List<TeamDto> teams = await _context.Teams
-										.Select(t => new TeamDto() {
-											TeamId = t.TeamId,
-											Name = t.Name,
-											AltName = t.AltName,
-											Country = t.Country,
-											Competitions = t.CompetitionTeams.Select(ct => new TeamCompetitionDto() {
-												CompetitionId = ct.Competition.CompetitionId,
-												Code = ct.Competition.Code,
-												Name = ct.Competition.Name,
-											}).ToList()
-										})
-										.Where(t => t.Country.Code.ToLower().Equals(countryCode.ToLower()))
+										.Select(t => _mapper.Map<TeamDto>(t))
 										.ToListAsync();
 
 			if (!(teams is null) && teams.Any())
@@ -72,21 +43,11 @@ namespace FootballApp.Api.Controllers {
 		[ProducesResponseType((int)HttpStatusCode.NoContent)]
 		public async Task<ActionResult<List<TeamDto>>> GetAllTeamsInCompetitionAsync(string competitionCode) {
 			List<TeamDto> teams = await _context.Teams
-										.Select(t => new TeamDto() {
-											TeamId = t.TeamId,
-											Name = t.Name,
-											AltName = t.AltName,
-											Country = t.Country,
-											Competitions = t.CompetitionTeams.Select(ct => new TeamCompetitionDto() {
-												CompetitionId = ct.Competition.CompetitionId,
-												Code = ct.Competition.Code,
-												Name = ct.Competition.Name,
-											}).ToList()
-										})
+										.Select(t => _mapper.Map<TeamDto>(t))
 										.ToListAsync();
 
 			// Todo: Find a way to move this in to the query
-			teams = teams.Where(t => t.Competitions.Any(c => c.Code.ToLower().Equals(competitionCode.ToLower()))).ToList();
+			//teams = teams.Where(t => t.Competitions.Any(c => c.Code.ToLower().Equals(competitionCode.ToLower()))).ToList();
 			
 			if (!(teams is null) && teams.Any())
 				return Ok(teams);
